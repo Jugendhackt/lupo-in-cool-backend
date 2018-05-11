@@ -5,8 +5,9 @@ const multer = require('multer');
 const upload = multer({storage: multer.memoryStorage()});
 
 router.post('/convert/json', upload.single('lupo'), (req, res) => {
-  console.log(req);
-  res.sendStatus(500);
+  console.log(req.file);
+  console.log(req.files);
+  res.sendStatus(200);
 });
 
 module.exports = router;
