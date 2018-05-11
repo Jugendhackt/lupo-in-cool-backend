@@ -1,0 +1,12 @@
+version: '2'
+services:
+  web:
+    build: .
+    volumes:
+    # only for development
+      - .:/app
+    ports:
+      - "0.0.0.0:3000:3000"
+#   depends_on:
+    environment:
+      PORT: 3000
