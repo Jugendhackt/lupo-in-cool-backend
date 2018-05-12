@@ -1,13 +1,34 @@
 const router = require("express").Router();
 const mdb = require("mdb");
+const csvParse = require("csv-parse");
 
-const multer = require('multer');
-const upload = multer({storage: multer.memoryStorage()});
+const upload = require('../../upload');
 
 router.post('/convert/json', upload.single('lupo'), (req, res) => {
-  console.log(req.file);
-  console.log(req.files);
-  res.sendStatus(200);
+  const mdbFile = mdb(req.file.path);
+  let result = {};
+
+  mdbFile.tables((err, tables) => {
+    if (err)
+      throw err;
+
+    tables.forEach((table) => {
+      mdbFile.toCSV(table, (err, csv) => {
+        if (err)
+          throw err;
+
+        csvParse(csv, {columns: true}, (err, output) => {
+          if (err)
+            throw err;
+
+          result[table] = output;
+          if (Object.keys(result).length === tables.length) {
+            res.send(result);
+          }
+        });
+      });
+    });
+  });
 });
 
 module.exports = router;
